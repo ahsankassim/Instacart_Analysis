@@ -1,0 +1,112 @@
+sources:
+  - name: source
+    database: INSTACART_RAW
+    schema: RAW
+    description: "raw tables loaded from snowflake which was uploaded from the device through snowflake CLI"
+
+    tables:
+      - name: aisles
+        description: "raw aisle data, aisle id is the primary key"
+        columns:
+          - name: aisle_id
+            tests:
+              - unique
+              - not_null
+
+
+
+      - name: departments
+        description: "raw department data, department id is the primary key"
+        columns:
+          - name: department_id
+            tests:
+              - unique
+              - not_null
+
+
+
+      - name: orders
+        description: "raw orders data with order_id as the primary key"
+        columns: 
+          - name: order_id 
+            tests:
+              - unique
+              - not_null
+          - name: user_id
+            tests: 
+              - not_null
+          - name: order_number
+            tests:
+              - not_null
+          - name: order_dow
+            tests: 
+              - not_null
+              - accepted_values:
+                  values: [0,1,2,3,4,5,6]
+          - name: order_hour_of_day
+            tests: 
+              - not_null
+              - accepted_values:
+                  values: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
+
+
+
+      - name: products
+        description: "raw products table with products, aisle_id, department_id"
+        columns:
+          - name: product_id
+            tests:
+              - unique
+              - not_null
+          - name: product_name
+            tests: 
+              - unique
+              - not_null 
+          - name: aisle_id
+            tests: 
+              - not_null
+          - name: department_id
+            tests: 
+              - not_null
+
+          
+        
+      - name: order_products_prior
+        description: "raw table that measures product sequence in cart and if the product is re-ordered"
+        columns: 
+          - name: order_id
+            tests: 
+              - not_null
+          - name: product_id
+            tests: 
+              - not_null 
+          - name: reordered
+            tests: 
+              - not_null
+              - accepted_values:
+                  values: [1,0] 
+          - name: add_to_cart_order
+            tests: 
+              - dbt_utils.expression_is_true:
+                  expression: "> 0"
+
+
+            
+      - name: order_products_train
+        description: "raw table that measures product sequence in cart and if the product is re-ordered"
+        columns: 
+          - name: order_id
+            tests: 
+              - not_null
+          - name: product_id
+            tests: 
+              - not_null 
+          - name: reordered
+            tests: 
+              - not_null
+              - accepted_values:
+                  values: [1,0] 
+          - name: add_to_cart_order
+            tests: 
+              - dbt_utils.expression_is_true:
+                  expression: "> 0"
