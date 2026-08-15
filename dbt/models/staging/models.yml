@@ -1,0 +1,78 @@
+models:
+  - name: stg_aisles
+    columns:
+      - name: aisle_id
+        tests:
+          - unique
+          - not_null
+      - name: aisle_name
+        tests:
+          - not_null
+          
+
+  - name: stg_departments
+    columns:
+      - name: department_id
+        tests:
+          - unique
+          - not_null
+      - name: department_name
+        tests:
+          - not_null
+
+
+  - name: stg_orders
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        tests:
+          - not_null
+      - name: order_number
+        tests:
+          - not_null
+      - name: order_hour
+        tests:
+          - not_null
+      - name: order_day
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+
+  - name: stg_products
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+      - name: product_name
+        tests:
+          - not_null
+      - name: aisle_id
+        tests:
+          - not_null
+      - name: department_id
+        tests:
+          - not_null
+
+
+  - name: stg_order_products
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: add_to_cart_order
+        tests:
+          - not_null
+      - name: is_reordered
+        tests:
+          - accepted_values:
+              arguments:
+                values: [0,1]

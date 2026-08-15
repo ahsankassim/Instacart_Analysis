@@ -44,6 +44,11 @@ sources:
               - accepted_values:
                   arguments:
                     values: [0,1,2,3,4,5,6]
+          - name: eval_set
+            tests:
+              - accepted_values:
+                  arguments:
+                    values: ['train', 'test', 'prior']
           - name: order_hour_of_day
             tests: 
               - not_null
