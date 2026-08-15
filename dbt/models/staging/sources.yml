@@ -42,12 +42,14 @@ sources:
             tests: 
               - not_null
               - accepted_values:
-                  values: [0,1,2,3,4,5,6]
+                  arguments:
+                    values: [0,1,2,3,4,5,6]
           - name: order_hour_of_day
             tests: 
               - not_null
               - accepted_values:
-                  values: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
+                  arguments:
+                    values: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
 
 
 
@@ -84,11 +86,13 @@ sources:
             tests: 
               - not_null
               - accepted_values:
-                  values: [1,0] 
+                  arguments:
+                    values: [1,0] 
           - name: add_to_cart_order
             tests: 
               - dbt_utils.expression_is_true:
-                  expression: "> 0"
+                  arguments:
+                    expression: "> 0"
 
 
             
@@ -105,8 +109,10 @@ sources:
             tests: 
               - not_null
               - accepted_values:
-                  values: [1,0] 
+                  arguments:
+                    values: [1,0] 
           - name: add_to_cart_order
             tests: 
               - dbt_utils.expression_is_true:
-                  expression: "> 0"
+                  arguments:
+                    expression: "> 0"

@@ -1,0 +1,8 @@
+seeds:
+  - name: order_dow_mapping
+    description: Maps instacarts order_dow integer [0_6] to day_names; NOTE:- These mappings are inferred since it is not confirmed by the source, order counts were at peak on ORDER_DOW 0 and 1, hence they are assumed as Saturday and Sunday respectively.
+    columns:
+      - name: order_dow
+        description: raw values from the source [0-6]
+      - name: day_name
+        description: inferred day name
