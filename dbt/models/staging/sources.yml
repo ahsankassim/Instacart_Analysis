@@ -119,6 +119,7 @@ sources:
                     values: [1,0] 
           - name: add_to_cart_order
             tests: 
+              - not_null
               - dbt_utils.expression_is_true:
                   arguments:
                     expression: "> 0"

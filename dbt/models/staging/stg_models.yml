@@ -22,6 +22,7 @@ models:
 
 
   - name: stg_orders
+    description: removed the rows which belonged to test set, since they don't have any corresponding values to join themselves with, and since those are dropped and prior and train tables are combined the entire "eval_set" columns in filtered out.
     columns:
       - name: order_id
         tests:
@@ -34,9 +35,11 @@ models:
         tests:
           - not_null
       - name: order_hour
+        description: renamed from "order_hour_of_day"
         tests:
           - not_null
       - name: order_day
+        description: order_dow is replaced with their respective inferred days (inferred since they are provided by the source)
         tests:
           - accepted_values:
               arguments:
@@ -55,9 +58,17 @@ models:
       - name: aisle_id
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_aisles')
+                field: aisle_id
       - name: department_id
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_departments')
+                field: department_id
 
 
   - name: stg_order_products
@@ -65,14 +76,20 @@ models:
       - name: order_id
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
       - name: product_id
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
       - name: add_to_cart_order
         tests:
           - not_null
       - name: is_reordered
         tests:
-          - accepted_values:
-              arguments:
-                values: [0,1]
+          - not_null
