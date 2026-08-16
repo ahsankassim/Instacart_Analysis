@@ -8,7 +8,7 @@ SELECT
     S.REORDER_RATE    
 FROM 
     {{ ref('product_names') }} N 
-JOIN
+LEFT JOIN
     {{ ref('product_summary') }} S 
 ON
     N.PRODUCT_ID = S.PRODUCT_ID

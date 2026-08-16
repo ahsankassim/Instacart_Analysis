@@ -1,0 +1,26 @@
+models:
+  - name: product_names
+    description: replaces aisle_id and department_id with aisle_name and department_name
+  
+
+  - name: product_summary
+    description: calculates reorder rate and avg cart position from order_products table for each product
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
+      - name: order_count
+        tests:
+          - not_null
+      - name: avg_cart_position
+        tests:
+          - not_null
+      - name: reorder_rate
+        tests:
+          - not_null
+  

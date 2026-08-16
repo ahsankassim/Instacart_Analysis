@@ -1,0 +1,10 @@
+models:
+  - name: dim_products
+    description: one row per product with stats.
+    columns:
+      - name: product_id 
+        tests:
+          - unique
+          - not_null 
+    
+
