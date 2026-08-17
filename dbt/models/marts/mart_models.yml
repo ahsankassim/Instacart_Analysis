@@ -8,3 +8,10 @@ models:
           - not_null 
     
 
+  - name: dim_users
+    description: one row per user id, generated from unique user_id's in stg_orders model.
+    columns:  
+      - name: user_id
+        tests:
+          - unique
+          - not_null

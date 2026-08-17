@@ -1,0 +1,12 @@
+{{ config(materialized = 'ephemeral')}}
+
+
+SELECT 
+    USER_ID,
+    MAX(ORDER_NUMBER) AS ORDER_COUNT,
+    SUM(DAYS_SINCE_PRIOR_ORDER) AS TENURE,
+    ROUND(SUM(DAYS_SINCE_PRIOR_ORDER)/MAX(ORDER_NUMBER),2) AS AVG_INTERVAL
+FROM 
+    {{ ref('stg_orders') }}
+GROUP BY 
+    1

@@ -28,9 +28,22 @@ models:
         tests:
           - unique
           - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_order_products')
+                field: order_id
+                description: "flags rows where order_id has no products; not a real world case scenario but to catch system errors."
       - name: user_id
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('user_order_summary')
+                field: user_id
+          - relationships:
+              arguments:
+                to: ref('user_base')
+                field: user_id
       - name: order_number
         tests:
           - not_null
