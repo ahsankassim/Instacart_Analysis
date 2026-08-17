@@ -5,7 +5,8 @@ SELECT
     N.DEPARTMENT_NAME,
     S.ORDER_COUNT,
     S.AVG_CART_POSITION,
-    S.REORDER_RATE    
+    S.REORDER_RATE,
+    S.WEIGHTED_REORDER_RATE    
 FROM 
     {{ ref('product_names') }} N 
 LEFT JOIN

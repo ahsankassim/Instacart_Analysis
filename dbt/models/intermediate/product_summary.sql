@@ -1,10 +1,34 @@
 {{ config( materialized = 'view') }}
 
-SELECT
-       PRODUCT_ID, 
-       COUNT(PRODUCT_ID) AS ORDER_COUNT,
-    ROUND(AVG(ADD_TO_CART_ORDER),2) AS AVG_CART_POSITION,
-    ROUND(AVG(IS_REORDERED),2) AS REORDER_RATE
-  FROM 
-      {{ ref('stg_order_products')}}
-  GROUP BY 1
+WITH SUMMARY AS (
+    SELECT
+        PRODUCT_ID, 
+        COUNT(PRODUCT_ID) AS ORDER_COUNT,
+        ROUND(AVG(ADD_TO_CART_ORDER),2) AS AVG_CART_POSITION,
+        AVG(IS_REORDERED) AS REORDER_RATE
+    FROM 
+          {{ ref('stg_order_products')}}
+    GROUP BY 1
+), 
+
+VARIABLES AS (
+    SELECT 
+        MEDIAN(ORDER_COUNT) AS M,
+        AVG(REORDER_RATE) AS C
+    FROM SUMMARY
+)
+
+SELECT 
+    PRODUCT_ID,
+    ORDER_COUNT,
+    AVG_CART_POSITION,
+    ROUND(REORDER_RATE, 2) AS REORDER_RATE,
+    ROUND(
+        (ORDER_COUNT/(ORDER_COUNT + M)) * REORDER_RATE +
+        (M/(M+ORDER_COUNT)) * C,
+        2 
+    ) AS WEIGHTED_REORDER_RATE
+FROM    
+    SUMMARY
+CROSS JOIN 
+    VARIABLES
