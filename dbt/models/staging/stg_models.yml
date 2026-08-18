@@ -38,7 +38,7 @@ models:
           - not_null
           - relationships:
               arguments:
-                to: ref('user_order_summary')
+                to: ref('user_order_summary_1')
                 field: user_id
           - relationships:
               arguments:

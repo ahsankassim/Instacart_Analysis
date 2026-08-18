@@ -64,8 +64,8 @@ models:
                 min_value: 0
 
 
-  - name: user_order_summary
-    description: aggregated order stats per user.
+  - name: user_order_summary_1
+    description: aggregated order stats per user, which is fed into user_order_summary_2
     columns:
       - name: user_id
         tests: 
@@ -73,8 +73,13 @@ models:
           - unique
           - relationships:
               arguments:
-                to: ref('dim_users')
+                to: ref('user_order_summary_2')
                 field: user_id
+      - name: order_count
+        tests: 
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: avg_items_per_order
         tests: 
           - dbt_utils.accepted_range:
@@ -92,3 +97,26 @@ models:
                 min_value: 0
                 max_value: 1
 
+
+  - name: user_order_summary_2
+    description: created to calculate weighted_reorder_rate without much clutter.
+    columns:
+      - name: user_id
+        tests: 
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('dim_users')
+                field: user_id
+      - name: order_count
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: weighted_reorder_rate
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
