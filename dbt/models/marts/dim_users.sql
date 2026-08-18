@@ -8,8 +8,8 @@ SELECT
     S.REORDER_RATE,
     S.WEIGHTED_REORDER_RATE
 FROM 
-    {{ ref('user_order_summary_2')}} S 
+    {{ ref('int_user_reorder_metrics')}} S
 JOIN 
-    {{ ref('user_base')}} B  
+    {{ ref('int_user_order_cadence')}} B
 ON  
     S.USER_ID = B.USER_ID

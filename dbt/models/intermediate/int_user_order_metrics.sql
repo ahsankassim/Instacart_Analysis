@@ -1,7 +1,7 @@
 {{ config(materialized = 'view') }}
 
--- Joining the orders and order products tables to get per row per user_id, product_id, order_id combination.
-WITH TEMP_USER AS (
+-- One row per order line, enriched with the ordering user.
+WITH USER_ORDER_LINES AS (
     SELECT 
         O.ORDER_ID,
         P.PRODUCT_ID,
@@ -15,7 +15,7 @@ WITH TEMP_USER AS (
         O.ORDER_ID = P.ORDER_ID
 )
 
--- Now calculating the required column by aggregating on user_id
+-- Aggregate order-line activity to one row per user.
 
 SELECT
     USER_ID, 
@@ -24,6 +24,6 @@ SELECT
     COUNT(DISTINCT ORDER_ID) AS ORDER_COUNT,
     AVG(IS_REORDERED) AS REORDER_RATE 
 FROM 
-    TEMP_USER
+    USER_ORDER_LINES
 GROUP BY   
     1

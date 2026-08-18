@@ -1,12 +1,17 @@
-{{ config( materialized = 'table') }}
+{{ config(materialized = 'view') }}
 
  
-WITH TEMP_VIEW AS (
+WITH USER_ORDER_METRICS AS (
+    SELECT *
+    FROM {{ ref('int_user_order_metrics') }}
+),
+
+REORDER_RATE_PRIOR AS (
     SELECT 
         MEDIAN(ORDER_COUNT) AS M,
         AVG(REORDER_RATE) AS C
     FROM 
-        {{ ref('user_order_summary_1') }}
+        USER_ORDER_METRICS
 )
 
 SELECT 
@@ -21,6 +26,6 @@ SELECT
         2 
     ) AS WEIGHTED_REORDER_RATE
 FROM    
-    {{ ref('user_order_summary_1') }}
+    USER_ORDER_METRICS
 CROSS JOIN 
-    TEMP_VIEW
+    REORDER_RATE_PRIOR

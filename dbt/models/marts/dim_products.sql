@@ -8,8 +8,8 @@ SELECT
     S.REORDER_RATE,
     S.WEIGHTED_REORDER_RATE    
 FROM 
-    {{ ref('product_names') }} N 
+    {{ ref('int_product_details') }} N
 LEFT JOIN
-    {{ ref('product_summary') }} S 
+    {{ ref('int_product_order_metrics') }} S
 ON
     N.PRODUCT_ID = S.PRODUCT_ID

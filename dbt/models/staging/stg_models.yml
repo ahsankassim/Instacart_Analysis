@@ -1,5 +1,6 @@
 models:
   - name: stg_aisles
+    description: Staged Instacart aisle reference data, with one row per aisle.
     columns:
       - name: aisle_id
         tests:
@@ -11,6 +12,7 @@ models:
           
 
   - name: stg_departments
+    description: Staged Instacart department reference data, with one row per department.
     columns:
       - name: department_id
         tests:
@@ -22,9 +24,10 @@ models:
 
 
   - name: stg_orders
-    description: removed the rows which belonged to test set, since they don't have any corresponding values to join themselves with, and since those are dropped and prior and train tables are combined the entire "eval_set" columns in filtered out.
+    description: Staged historical orders from the prior and train populations. Test orders are excluded because their product line items are not supplied. The model renames order_hour_of_day and maps source order_dow values to inferred weekday labels.
     columns:
       - name: order_id
+        description: Unique order identifier. Every staged historical order is expected to have at least one associated product line.
         tests:
           - unique
           - not_null
@@ -32,17 +35,16 @@ models:
               arguments:
                 to: ref('stg_order_products')
                 field: order_id
-                description: "flags rows where order_id has no products; not a real world case scenario but to catch system errors."
       - name: user_id
         tests:
           - not_null
           - relationships:
               arguments:
-                to: ref('user_order_summary_1')
+                to: ref('int_user_order_metrics')
                 field: user_id
           - relationships:
               arguments:
-                to: ref('user_base')
+                to: ref('int_user_order_cadence')
                 field: user_id
       - name: order_number
         tests:
@@ -52,14 +54,16 @@ models:
         tests:
           - not_null
       - name: order_day
-        description: order_dow is replaced with their respective inferred days (inferred since they are provided by the source)
+        description: Weekday label inferred from source order_dow values using the project mapping seed.
         tests:
+          - not_null
           - accepted_values:
               arguments:
                 values: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 
   - name: stg_products
+    description: Staged product catalogue, with one row per product and its source aisle and department identifiers.
     columns:
       - name: product_id
         tests:
@@ -85,6 +89,13 @@ models:
 
 
   - name: stg_order_products
+    description: Historical order line items formed by unioning the prior and train source datasets and standardizing reordered as is_reordered.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - order_id
+              - product_id
     columns:
       - name: order_id
         tests:
@@ -103,6 +114,12 @@ models:
       - name: add_to_cart_order
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "> 0"
       - name: is_reordered
         tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]

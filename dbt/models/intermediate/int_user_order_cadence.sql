@@ -1,4 +1,4 @@
-{{ config(materialized = 'ephemeral')}}
+{{ config(materialized = 'ephemeral') }}
 
 
 SELECT 

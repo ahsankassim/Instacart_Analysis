@@ -1,10 +1,10 @@
 models:
-  - name: product_names
-    description: replaces aisle_id and department_id with aisle_name and department_name
+  - name: int_product_details
+    description: One row per product, enriching the staged product catalogue with its aisle and department names.
   
 
-  - name: product_summary
-    description: calculates reorder rate and avg cart position from order_products table for each product
+  - name: int_product_order_metrics
+    description: One row per purchased product with order-line volume, average add-to-cart position, raw reorder rate, and a globally smoothed reorder rate calculated from historical order lines.
     columns:
       - name: product_id
         tests:
@@ -17,9 +17,15 @@ models:
       - name: order_count
         tests:
           - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
       - name: avg_cart_position
         tests:
           - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
       - name: reorder_rate
         tests:
           - not_null
@@ -36,8 +42,8 @@ models:
                 max_value: 1
   
 
-  - name: user_base
-    description: simple aggregate calculations based on user_id from orders table.
+  - name: int_user_order_cadence
+    description: One row per user with order count, observed ordering tenure, and average time between successive orders.
     columns:
       - name: user_id
         tests: 
@@ -49,23 +55,26 @@ models:
                 field: user_id
       - name: order_count
         tests: 
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
-                min_value: 0
+                min_value: 1
       - name: tenure
         tests: 
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
       - name: avg_interval
         tests: 
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
 
 
-  - name: user_order_summary_1
-    description: aggregated order stats per user, which is fed into user_order_summary_2
+  - name: int_user_order_metrics
+    description: One row per user with order count, average items per order, distinct products purchased, and raw reorder rate across orders with observed product lines.
     columns:
       - name: user_id
         tests: 
@@ -73,33 +82,37 @@ models:
           - unique
           - relationships:
               arguments:
-                to: ref('user_order_summary_2')
+                to: ref('int_user_reorder_metrics')
                 field: user_id
       - name: order_count
         tests: 
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
-                min_value: 0
+                min_value: 1
       - name: avg_items_per_order
         tests: 
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
-                min_value: 0
+                min_value: 1
       - name: unique_products
         tests: 
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
-                min_value: 0
+                min_value: 1
       - name: reorder_rate
         tests: 
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 1
 
 
-  - name: user_order_summary_2
-    description: created to calculate weighted_reorder_rate without much clutter.
+  - name: int_user_reorder_metrics
+    description: One row per user that carries forward user order metrics and adds a globally smoothed reorder rate.
     columns:
       - name: user_id
         tests: 
@@ -111,11 +124,13 @@ models:
                 field: user_id
       - name: order_count
         tests:
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
       - name: weighted_reorder_rate
         tests:
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
