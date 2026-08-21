@@ -15,3 +15,35 @@ models:
         tests:
           - unique
           - not_null
+
+  - name: fct_orders 
+    description: one row per order id, generated directly from the stg_orders model
+    columns:
+      - name: order_id
+        tests: 
+          - unique 
+          - not_null
+          - relationships:
+              arguments:
+                to: stg_orders
+                field: order_id
+      - name: user_id
+        tests: 
+          - relationships: 
+              arguments:
+                to: dim_users
+                field: user_id
+      - name: order_number
+        tests: 
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0 
+          - not_null
+      - name: basket_size
+        tests: 
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0 
+          - not_null
+
+          
