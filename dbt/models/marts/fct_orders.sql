@@ -1,7 +1,7 @@
 WITH BASKET_SIZE AS (
     
     SELECT 
-        O.ORDER_ID, COUNT(O.ORDER_ID) AS BASKET_SIZE
+        O.ORDER_ID, COUNT(OP.PRODUCT_ID) AS BASKET_SIZE
     FROM 
         {{ ref('stg_orders')}} O
     LEFT JOIN 

@@ -1,4 +1,4 @@
-models:
+buimodels:
   - name: int_product_details
     description: One row per product, enriching the staged product catalogue with its aisle and department names.
   
