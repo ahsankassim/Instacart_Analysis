@@ -3,3 +3,5 @@ logs/
 data/*.csv
 notes.md
 myenv/
+Notes/.obsidian
+*.pbix
