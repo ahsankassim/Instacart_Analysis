@@ -34,6 +34,7 @@ buimodels:
                 min_value: 0
                 max_value: 1
       - name: weighted_reorder_rate
+        description: Bayesian-weighted reorder rate; shrinks small-sample products toward the global mean to avoid inflated rates from low order counts.
         tests:
           - not_null
           - dbt_utils.accepted_range:
@@ -129,6 +130,7 @@ buimodels:
               arguments:
                 min_value: 0
       - name: weighted_reorder_rate
+        description: Bayesian-weighted reorder rate; shrinks small-sample products toward the global mean to avoid inflated rates from low order counts.
         tests:
           - not_null
           - dbt_utils.accepted_range:
